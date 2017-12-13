@@ -5,6 +5,7 @@ import com.rftdevgroup.transporthub.data.dto.transport.TransportListViewDTO;
 import com.rftdevgroup.transporthub.data.model.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import java.util.List;
 import java.util.Optional;
 
 public interface TransportService {
@@ -13,4 +14,5 @@ public interface TransportService {
     boolean delete(long id, User user);
     boolean adminDelete(long id);
     <T> Optional<T> findAndMapTransport(long id, Class<T> mapTo);
+    List<TransportListViewDTO> listTransports();
 }

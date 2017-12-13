@@ -16,10 +16,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -99,5 +100,32 @@ public class TransportServiceImpl implements TransportService {
     public <T> Optional<T> findAndMapTransport(long id, Class<T> mapTo) {
         Transport transport = transportRepository.findOne(id);
         return transport == null ? Optional.empty() : Optional.of(modelMapper.map(transport, mapTo));
+    }
+
+    @Override
+    public List<TransportListViewDTO> listTransports() {
+        List<TransportListViewDTO> transportListViewDTOS = new ArrayList<>();
+        transportRepository.findAll().forEach(transport -> {
+            TransportListViewDTO listViewDTO = new TransportListViewDTO();
+
+            //Map transport to dto
+            listViewDTO.setId(transport.getId());
+            listViewDTO.setCargoName(transport.getCargo().getName());
+            listViewDTO.setCityFrom(transport.getPlaceOfLoad().getCity());
+            listViewDTO.setCityTo(transport.getPlaceOfUnload().getCity());
+            listViewDTO.setDescription(transport.getCargo().getDescription());
+            listViewDTO.setOwner(transport.getOwner().getUserName());
+            if (transport.getBids().size() > 0) {
+                listViewDTO.setCurrentPrice(transport.getBids().stream().mapToInt(b -> b.getAmount()).min().getAsInt());
+                listViewDTO.setLowestBidder(transport.getBids().stream().min(Comparator.comparing(Bid::getAmount)).get().getBidder().getUserName());
+            } else {
+                listViewDTO.setCurrentPrice(transport.getStartingPrice());
+                listViewDTO.setLowestBidder("");
+            }
+            listViewDTO.setDaysRemaining(ChronoUnit.DAYS.between(LocalDate.now(), transport.getTimeOfLoad()));
+            transportListViewDTOS.add(listViewDTO);
+        });
+
+        return transportListViewDTOS;
     }
 }

@@ -40,7 +40,7 @@ public class Transport {
 
     private int startingPrice;
 
-    @OneToMany(mappedBy = "transport")
+    @OneToMany(mappedBy = "transport", fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<Bid> bids;
 

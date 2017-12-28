@@ -1,8 +1,11 @@
 package com.rftdevgroup.transporthub.ui;
 
 import com.rftdevgroup.transporthub.configuration.security.CustomAuthProvider;
+import com.rftdevgroup.transporthub.service.UserService;
+import com.rftdevgroup.transporthub.ui.view.RegistrationView;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
+import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.spring.annotation.SpringUI;
@@ -17,17 +20,22 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @Theme("valo")
 public class LoginUI extends UI {
 
+    private Navigator navigator;
+
     @Autowired
     private CustomAuthProvider authProvider;
+
+    @Autowired
+    private UserService userService;
 
     TextField user;
     PasswordField password;
     Button loginButton = new Button("Login", this::loginBtnClick);
+    Button registerButton = new Button("register", this::registerBtnClick);
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         setSizeFull();
-
         user = new TextField("User:");
         user.setWidth("300px");
 
@@ -35,7 +43,10 @@ public class LoginUI extends UI {
         password.setWidth("300px");
         password.setValue("");
 
-        VerticalLayout fields = new VerticalLayout(user, password, loginButton);
+        HorizontalLayout buttons = new HorizontalLayout();
+        buttons.addComponents(loginButton, registerButton);
+
+        VerticalLayout fields = new VerticalLayout(user, password, buttons);
         fields.setCaption("Login form");
         fields.setSpacing(true);
         fields.setMargin(new MarginInfo(true, true, true, false));
@@ -55,5 +66,9 @@ public class LoginUI extends UI {
         SecurityContextHolder.getContext().setAuthentication(auth);
 
         getPage().setLocation("/transporthub/");
+    }
+
+    private void registerBtnClick(Button.ClickEvent e) {
+        setContent(new RegistrationView(userService, this));
     }
 }

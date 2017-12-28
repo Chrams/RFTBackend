@@ -3,10 +3,12 @@ package com.rftdevgroup.transporthub.ui.view;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
+@SpringView(name = "newTransportView")
 public class NewTransportView extends VerticalLayout implements View {
 
     private Navigator navigator;

@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Component
 public class ConfigurationFileResourceResolver {
-    private final String[] CONFIGS = {"main"};
+    private final String[] CONFIGS = {"main","vaadin"};
     private final String PROFILE_CONFIG_PREFIX = "config-";
     private final String PROFILE_CONFIG_SUFFIX = ".yml";
     private final String CONFIG_DIR_NAME = "config";

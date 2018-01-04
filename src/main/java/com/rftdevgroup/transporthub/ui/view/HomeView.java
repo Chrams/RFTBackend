@@ -8,7 +8,7 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
-@SpringView(name = "home")
+@SpringView(name = Views.HOME)
 public class HomeView extends VerticalLayout implements View {
 
     private Label label = new Label();

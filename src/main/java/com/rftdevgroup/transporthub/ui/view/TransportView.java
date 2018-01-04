@@ -10,7 +10,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@SpringView(name = "transportView")
+@SpringView(name = Views.TRANSPORT_LIST)
 public class TransportView extends VerticalLayout implements View {
 
     private TransportService transportService;

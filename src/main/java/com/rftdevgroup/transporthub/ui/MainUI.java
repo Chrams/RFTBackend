@@ -7,6 +7,7 @@ import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.spring.navigator.SpringViewProvider;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +29,16 @@ public class MainUI extends UI {
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         setContent(layout);
+        setSizeFull();
+        layout.setDefaultComponentAlignment(Alignment.TOP_CENTER);
         Navigator navigator = new Navigator(this, container);
         navigator.addProvider(viewProvider);
         setNavigator(navigator);
+
         layout.addComponent(new MainMenu(getNavigator()));
         layout.addComponent(container);
+
         getPage().setTitle(PAGE_TITLE);
-        getNavigator().navigateTo(Views.HOME_VIEW.toString());
+        getNavigator().navigateTo(Views.HOME);
     }
 }

@@ -3,6 +3,7 @@ package com.rftdevgroup.transporthub.ui;
 import com.rftdevgroup.transporthub.configuration.security.CustomAuthProvider;
 import com.rftdevgroup.transporthub.service.UserService;
 import com.rftdevgroup.transporthub.ui.view.RegistrationView;
+import com.rftdevgroup.transporthub.ui.window.RegistrationWindow;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.navigator.Navigator;
@@ -69,6 +70,8 @@ public class LoginUI extends UI {
     }
 
     private void registerBtnClick(Button.ClickEvent e) {
-        setContent(new RegistrationView(userService, this));
+        //setContent(new RegistrationView(userService, this));
+        RegistrationWindow regWin = new RegistrationWindow(userService);
+        UI.getCurrent().addWindow(regWin);
     }
 }

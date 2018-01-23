@@ -6,6 +6,7 @@ import com.rftdevgroup.transporthub.data.dto.user.UserUpdateDTO;
 import com.rftdevgroup.transporthub.data.model.user.Address;
 import com.rftdevgroup.transporthub.data.model.user.User;
 import com.rftdevgroup.transporthub.service.UserService;
+import com.rftdevgroup.transporthub.ui.components.AddressForm;
 import com.vaadin.data.Binder;
 import com.vaadin.data.ValidationException;
 import com.vaadin.icons.VaadinIcons;
@@ -19,6 +20,7 @@ import com.vaadin.ui.TextField;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import javax.annotation.PostConstruct;
 import java.util.Optional;
 
 @SpringView(name = Views.USER_DETAILS)
@@ -47,9 +49,9 @@ public class UserDetailsView extends FormLayout implements View {
     @Autowired
     public UserDetailsView(UserService userService) {
         this.userService = userService;
-        init();
     }
 
+    @PostConstruct
     private void init() {
         userBinder = new Binder<>();
 
@@ -73,7 +75,6 @@ public class UserDetailsView extends FormLayout implements View {
         activeAddress = activeUser.get().getAddress();
 
         userBinder.readBean(activeUser.get());
-
 
         addressBinder = new Binder<>();
 

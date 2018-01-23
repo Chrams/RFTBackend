@@ -2,7 +2,6 @@ package com.rftdevgroup.transporthub.ui;
 
 import com.rftdevgroup.transporthub.configuration.security.CustomAuthProvider;
 import com.rftdevgroup.transporthub.service.UserService;
-import com.rftdevgroup.transporthub.ui.view.RegistrationView;
 import com.rftdevgroup.transporthub.ui.window.RegistrationWindow;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
@@ -37,6 +36,7 @@ public class LoginUI extends UI {
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         setSizeFull();
+        setStyleName("loginUI");
         user = new TextField("User:");
         user.setWidth("300px");
 

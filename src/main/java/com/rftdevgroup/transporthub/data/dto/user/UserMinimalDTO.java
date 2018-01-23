@@ -7,4 +7,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserMinimalDTO {
     private String userName;
+
+    @Override
+    public String toString() {
+        return userName;
+    }
 }

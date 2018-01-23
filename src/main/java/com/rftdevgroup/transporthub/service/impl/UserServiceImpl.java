@@ -11,6 +11,7 @@ import com.rftdevgroup.transporthub.data.repository.transport.TransportRepositor
 import com.rftdevgroup.transporthub.data.repository.user.RoleRepository;
 import com.rftdevgroup.transporthub.data.repository.user.UserRepository;
 import com.rftdevgroup.transporthub.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
  * An implementation of the {@link UserService}.
  */
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -62,10 +64,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserCredentialDTO regiserUser(UserRegisterDTO registerDTO) {
         Assert.notNull(registerDTO, "Register dto must not be null.");
+        log.debug(registerDTO.toString());
         User userToSave = modelMapper.map(registerDTO, User.class);
         Role role = roleRepository.findByName("user");
         userToSave.setRoles(Arrays.asList(role));
         userToSave.setActive(true);
+        log.debug(userToSave.print());
         User saved = userRepository.save(userToSave);
         return modelMapper.map(saved, UserCredentialDTO.class);
     }

@@ -1,7 +1,5 @@
 package com.rftdevgroup.transporthub.ui.view;
 
-import com.rftdevgroup.transporthub.ui.view.menu.MainMenu;
-import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
@@ -23,7 +21,6 @@ public class HomeView extends VerticalLayout implements View {
         popupContent.addComponent(new Button("Button"));
 
         PopupView popup = new PopupView(null, popupContent);
-
 
         Button button = new Button("Show details", click -> popup.setPopupVisible(true));
 

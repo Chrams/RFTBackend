@@ -103,4 +103,14 @@ public class UserServiceImpl implements UserService {
         }
         return null;
     }
+
+    @Override
+    public User findById(long id) {
+        return userRepository.findOne(id);
+    }
+
+    @Override
+    public User save(User userToSave) {
+        return userRepository.save(userToSave);
+    }
 }

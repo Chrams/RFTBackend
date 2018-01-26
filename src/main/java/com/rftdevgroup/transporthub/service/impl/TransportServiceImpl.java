@@ -80,8 +80,10 @@ public class TransportServiceImpl implements TransportService {
         Transport transportToDelete = transportRepository.findOne(id);
         if (transportToDelete != null && transportToDelete.getOwner().equals(user)) {
             transportRepository.delete(id);
+            log.debug("Deleted.");
             return true;
         } else {
+            log.debug("Cannot delete {}, {}.",id, user);
             return false;
         }
     }
@@ -126,6 +128,37 @@ public class TransportServiceImpl implements TransportService {
             transportListViewDTOS.add(listViewDTO);
         });
 
+        return transportListViewDTOS;
+    }
+
+    @Override
+    public Transport save(Transport transportToSave) {
+        return transportRepository.save(transportToSave);
+    }
+
+    @Override
+    public List<TransportListViewDTO> listUsersTransports(User user) {
+        List<TransportListViewDTO> transportListViewDTOS = new ArrayList<>();
+        transportRepository.findAllByOwner(user).forEach(transport -> {
+            TransportListViewDTO listViewDTO = new TransportListViewDTO();
+
+            //Map transport to dto
+            listViewDTO.setId(transport.getId());
+            listViewDTO.setCargoName(transport.getCargo().getName());
+            listViewDTO.setCityFrom(transport.getPlaceOfLoad().getCity());
+            listViewDTO.setCityTo(transport.getPlaceOfUnload().getCity());
+            listViewDTO.setDescription(transport.getCargo().getDescription());
+            listViewDTO.setOwner(transport.getOwner().getUserName());
+            if (transport.getBids().size() > 0) {
+                listViewDTO.setCurrentPrice(transport.getBids().stream().mapToInt(b -> b.getAmount()).min().getAsInt());
+                listViewDTO.setLowestBidder(transport.getBids().stream().min(Comparator.comparing(Bid::getAmount)).get().getBidder().getUserName());
+            } else {
+                listViewDTO.setCurrentPrice(transport.getStartingPrice());
+                listViewDTO.setLowestBidder("");
+            }
+            listViewDTO.setDaysRemaining(ChronoUnit.DAYS.between(LocalDate.now(), transport.getTimeOfLoad()));
+            transportListViewDTOS.add(listViewDTO);
+        });
         return transportListViewDTOS;
     }
 }

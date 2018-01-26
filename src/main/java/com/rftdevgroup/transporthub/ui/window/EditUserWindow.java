@@ -1,53 +1,100 @@
 package com.rftdevgroup.transporthub.ui.window;
 
-import com.rftdevgroup.transporthub.data.dto.user.UserDTO;
-import com.rftdevgroup.transporthub.data.dto.user.UserUpdateDTO;
+import com.rftdevgroup.transporthub.data.model.user.Address;
+import com.rftdevgroup.transporthub.data.model.user.User;
+import com.rftdevgroup.transporthub.data.model.user.UserDetails;
+import com.rftdevgroup.transporthub.service.UserService;
+import com.rftdevgroup.transporthub.ui.components.AddressForm;
 import com.vaadin.data.Binder;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.Window;
+import com.vaadin.data.ValidationException;
+import com.vaadin.ui.*;
 import lombok.extern.slf4j.Slf4j;
-import javax.annotation.PostConstruct;
 
 @Slf4j
 public class EditUserWindow extends Window {
 
-    private FormLayout layout = new FormLayout();
-    private UserDTO userToEdit;
-    private Binder<UserUpdateDTO> binder = new Binder<>();
-    private UserUpdateDTO updateDTO = new UserUpdateDTO();
+    private VerticalLayout layout = new VerticalLayout();
+    private User userToEdit;
+    private UserService userService;
 
-    private TextField firstName = new TextField("First Name");
-    private TextField lastName = new TextField("Last Name");
-    private TextField email = new TextField("Email Address");
+    private TextField userNameField = new TextField("Username");
+    private TextField firstNameField = new TextField("First Name");
+    private TextField lastNameField = new TextField("Last Name");
+    private TextField emailField = new TextField("Email");
 
-    public EditUserWindow(UserDTO userToEdit){
+    private Binder<UserDetails> detailsBinder = new Binder<>();
+    private Binder<Address> addressBinder;
+
+    public EditUserWindow(UserService userService, long id) {
         super("Edit User Form");
-        this.userToEdit = userToEdit;
+        this.userService = userService;
+        userToEdit = userService.findById(id);
         center();
         init();
         setContent(layout);
     }
 
-    private  void init(){
-        layout.addComponent(firstName);
-        binder.forField(firstName).bind(UserUpdateDTO::getFirstName, UserUpdateDTO::setFirstName);
-        layout.addComponent(lastName);
-        binder.forField(lastName).bind(UserUpdateDTO::getLastName, UserUpdateDTO::setLastName);
-        layout.addComponent(email);
-        binder.forField(email).bind(UserUpdateDTO::getEmail, UserUpdateDTO::setEmail);
+    private void init() {
 
-        setUpdateDTO();
-        binder.readBean(updateDTO);
+        userNameField.setReadOnly(true);
+        userNameField.setValue(userToEdit.getUserName());
+        layout.addComponent(userNameField);
+
+        UserDetails details = userToEdit.getDetails();
+
+        HorizontalLayout detailsRow = new HorizontalLayout();
+        detailsRow.addComponents(firstNameField, lastNameField, emailField);
+        detailsBinder.forField(firstNameField)
+                .withValidator(firstName -> firstName.length() > 0, "First name cannot be empty")
+                .bind(UserDetails::getFirstName, UserDetails::setFirstName);
+        detailsBinder.forField(lastNameField)
+                .withValidator(lastName -> lastName.length() > 0, "Last name cannot be empty")
+                .bind(UserDetails::getLastName, UserDetails::setLastName);
+        detailsBinder.forField(emailField)
+                .withValidator(email -> email.length() > 3, "Please provide a valid email")
+                .bind(UserDetails::getEmail, UserDetails::setEmail);
+        layout.addComponent(detailsRow);
+
+        AddressForm addressForm = new AddressForm();
+        layout.addComponent(addressForm);
+        addressBinder = addressForm.getBinder();
+
+        Button saveBtn = new Button("Save");
+        saveBtn.addClickListener(saveBtnClick);
+        layout.addComponent(saveBtn);
+
+        detailsBinder.readBean(userToEdit.getDetails());
+        addressBinder.readBean(userToEdit.getDetails().getAddress());
 
         layout.setMargin(true);
     }
 
-    private void setUpdateDTO(){
-        updateDTO.setAddress(userToEdit.getAddress());
-        updateDTO.setEmail(userToEdit.getEmail());
-        updateDTO.setFirstName(userToEdit.getFirstName());
-        updateDTO.setLastName(userToEdit.getLastName());
-        binder.readBean(updateDTO);
-    }
+    private Button.ClickListener saveBtnClick = new Button.ClickListener() {
+        @Override
+        public void buttonClick(Button.ClickEvent clickEvent) {
+            Notification.show("Saving");
+            UserDetails details = userToEdit.getDetails();
+            Address address = details.getAddress();
+            try {
+                detailsBinder.writeBean(details);
+                addressBinder.writeBean(address);
+                details.setAddress(address);
+                userToEdit.setDetails(details);
+                log.debug("User to save: {}", userToEdit);
+                log.debug("Details to save: {}", userToEdit.getDetails());
+                log.debug("Address to save: {}", userToEdit.getDetails().getAddress());
+
+                User savedUser = userService.save(userToEdit);
+
+                log.debug("saved user: {}", savedUser);
+                log.debug("saved details: {}", savedUser.getDetails());
+                log.debug("saved address: {}", savedUser.getDetails().getAddress());
+                UI.getCurrent().getPage().reload();
+                close();
+
+            } catch (ValidationException e) {
+                e.printStackTrace();
+            }
+        }
+    };
 }

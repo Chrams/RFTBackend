@@ -13,10 +13,7 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextField;
+import com.vaadin.ui.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -122,6 +119,7 @@ public class UserDetailsView extends FormLayout implements View {
                 Optional<User> user = userService.findAndMapUser(activeUser.get().getUserName(),User.class);
                 userService.updateUser(user.get().getId(), modifiedUser);
                 Notification.show("Your profile has been updated successfully!");
+                UI.getCurrent().getPage().reload();
             } catch (ValidationException e) {
                 Notification.show("Something went wrong!");
             }

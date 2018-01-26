@@ -1,6 +1,7 @@
 package com.rftdevgroup.transporthub.ui.view.admin;
 
 import com.rftdevgroup.transporthub.data.dto.user.UserDTO;
+import com.rftdevgroup.transporthub.data.repository.user.UserRepository;
 import com.rftdevgroup.transporthub.service.UserService;
 import com.rftdevgroup.transporthub.ui.view.Views;
 import com.rftdevgroup.transporthub.ui.window.EditUserWindow;
@@ -25,7 +26,7 @@ public class UserListView extends VerticalLayout implements View {
     private Optional<UserDTO> selectedUser = Optional.empty();
 
     @Autowired
-    public UserListView(UserService userService) {
+    public UserListView(UserService userService, UserRepository userRepository) {
         this.userService = userService;
     }
 
@@ -67,7 +68,7 @@ public class UserListView extends VerticalLayout implements View {
         public void buttonClick(Button.ClickEvent clickEvent) {
             if(selectedUser.isPresent()){
                 //
-                EditUserWindow editWindow = new EditUserWindow(selectedUser.get());
+                EditUserWindow editWindow = new EditUserWindow(userService, selectedUser.get().getId());
                 UI.getCurrent().addWindow(editWindow);
             } else {
                 Notification.show("Select a user from the list.");
@@ -80,6 +81,7 @@ public class UserListView extends VerticalLayout implements View {
         public void buttonClick(Button.ClickEvent clickEvent) {
             if(selectedUser.isPresent()){
                 //
+                userService.deleteUser(selectedUser.get().getId());
             } else {
                 Notification.show("Select a user from the list.");
             }

@@ -2,7 +2,10 @@ package com.rftdevgroup.transporthub.ui.window;
 
 import com.rftdevgroup.transporthub.data.dto.auction.BidDTO;
 import com.rftdevgroup.transporthub.data.dto.transport.TransportDetailsDTO;
+import com.rftdevgroup.transporthub.data.model.transport.Cargo;
+import com.rftdevgroup.transporthub.ui.components.CargoForm;
 import com.vaadin.ui.*;
+import org.modelmapper.ModelMapper;
 
 public class TransportDetailsWindow extends Window {
 
@@ -34,31 +37,11 @@ public class TransportDetailsWindow extends Window {
         userLayout.addComponents(userName, firstName, lastName);
         layout.addComponent(userLayout);
 
-        layout.addComponent(new Label("Cargo"));
-        HorizontalLayout cargo1Layout = new HorizontalLayout();
-        HorizontalLayout cargo2Layout = new HorizontalLayout();
-        TextField cargoName = new TextField("Name");
-        cargoName.setReadOnly(true);
-        cargoName.setValue(transport.getCargo().getName());
-        TextField cargoDescription = new TextField("Description");
-        cargoDescription.setReadOnly(true);
-        cargoDescription.setValue(transport.getCargo().getDescription());
-        TextField cargoWeight = new TextField("Weight");
-        cargoWeight.setReadOnly(true);
-        cargoWeight.setValue(Long.toString(transport.getCargo().getWeight()));
-        TextField cargoWidth = new TextField("Width");
-        cargoWidth.setReadOnly(true);
-        cargoWidth.setValue(Double.toString(transport.getCargo().getWidth()));
-        TextField cargoHeight = new TextField("Height");
-        cargoHeight.setReadOnly(true);
-        cargoHeight.setValue(Double.toString(transport.getCargo().getHeight()));
-        TextField cargoDepth = new TextField("Depth");
-        cargoDepth.setReadOnly(true);
-        cargoDepth.setValue(Double.toString(transport.getCargo().getDepth()));
-        cargo1Layout.addComponents(cargoName, cargoDescription, cargoWeight);
-        layout.addComponent(cargo1Layout);
-        cargo2Layout.addComponents(cargoWidth, cargoHeight, cargoDepth);
-        layout.addComponent(cargo2Layout);
+        CargoForm cargo = new CargoForm();
+        layout.addComponent(cargo);
+        ModelMapper mapper = new ModelMapper();
+        Cargo cargoFromDTO = mapper.map(transport.getCargo(), Cargo.class);
+        cargo.setFormData(cargoFromDTO);
 
         TextField placeOfLoad = new TextField("Place of Load");
         placeOfLoad.setReadOnly(true);

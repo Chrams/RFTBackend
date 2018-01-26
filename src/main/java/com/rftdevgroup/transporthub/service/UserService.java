@@ -36,4 +36,8 @@ public interface UserService {
 
     UserDTO updateUser(long id, UserUpdateDTO updateDTO);
 
+    User findById(long id);
+
+    User save(User userToSave);
+
 }

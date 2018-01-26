@@ -26,6 +26,7 @@ public class Address {
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer()
+                .append("[").append(id).append("]: ")
                 .append(country).append(", ")
                 .append(zipcode).append(" ")
                 .append(city).append(" ")

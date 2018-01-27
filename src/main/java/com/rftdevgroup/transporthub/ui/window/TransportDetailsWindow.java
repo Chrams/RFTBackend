@@ -3,19 +3,26 @@ package com.rftdevgroup.transporthub.ui.window;
 import com.rftdevgroup.transporthub.data.dto.auction.BidDTO;
 import com.rftdevgroup.transporthub.data.dto.transport.TransportDetailsDTO;
 import com.rftdevgroup.transporthub.data.model.transport.Cargo;
+import com.rftdevgroup.transporthub.service.AuctionService;
+import com.rftdevgroup.transporthub.service.impl.errors.AuctionError;
 import com.rftdevgroup.transporthub.ui.components.CargoForm;
+import com.vaadin.navigator.View;
+import com.vaadin.server.Page;
 import com.vaadin.ui.*;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class TransportDetailsWindow extends Window {
 
     private FormLayout layout = new FormLayout();
     private TransportDetailsDTO transport;
+    private AuctionService auctionService;
+    TextField bidField = new TextField("Amount");
 
-    public TransportDetailsWindow(TransportDetailsDTO dto) {
+    public TransportDetailsWindow(TransportDetailsDTO dto, AuctionService auctionService) {
         super("Transport Details");
         transport = dto;
-
+        this.auctionService = auctionService;
         center();
         init();
         setContent(layout);
@@ -70,9 +77,33 @@ public class TransportDetailsWindow extends Window {
         layout.addComponent(bids);
 
         Button bid = new Button("Place bid");
-        layout.addComponent(bid);
+        bid.addClickListener(bidClickListener);
+
+        HorizontalLayout bidLayout = new HorizontalLayout();
+        bidLayout.addComponents(bidField, bid);
+        layout.addComponent(bidLayout);
 
         layout.setMargin(true);
     }
+
+    private Button.ClickListener bidClickListener = new Button.ClickListener() {
+        @Override
+        public void buttonClick(Button.ClickEvent clickEvent) {
+            String amount = bidField.getValue();
+            int val = Integer.parseInt(amount);
+            if(val > 0)
+            {
+                try{
+                    auctionService.makeBid(transport.getId(),val, SecurityContextHolder.getContext().getAuthentication().getName());
+                    UI.getCurrent().getPage().reload();
+                } catch (AuctionError auctionError) {
+                    Notification.show(auctionError.getMessage());
+                }
+            } else {
+                Notification.show("Bad value for bidding.");
+            }
+
+        }
+    };
 
 }

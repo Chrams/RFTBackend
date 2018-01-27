@@ -10,6 +10,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class TransportDetailsDTO {
+    private long id;
     private TransportOwnerDTO owner;
     private CargoDTO cargo;
     private AddressDTO placeOfLoad;

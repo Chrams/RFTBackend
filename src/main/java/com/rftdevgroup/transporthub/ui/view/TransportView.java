@@ -5,6 +5,7 @@ import com.rftdevgroup.transporthub.data.dto.transport.TransportListViewDTO;
 import com.rftdevgroup.transporthub.data.model.user.User;
 import com.rftdevgroup.transporthub.data.repository.transport.TransportRepository;
 import com.rftdevgroup.transporthub.data.repository.user.UserRepository;
+import com.rftdevgroup.transporthub.service.AuctionService;
 import com.rftdevgroup.transporthub.service.TransportService;
 import com.rftdevgroup.transporthub.service.UserService;
 import com.rftdevgroup.transporthub.ui.window.NewTransportWindow;
@@ -27,6 +28,7 @@ public class TransportView extends VerticalLayout implements View {
 
     private TransportService transportService;
     private UserService userService;
+    private AuctionService auctionService;
 
     private Grid<TransportListViewDTO> transportGrid = new Grid<>(TransportListViewDTO.class);
     private Grid<TransportListViewDTO> ownTransportGrid = new Grid<>(TransportListViewDTO.class);
@@ -37,9 +39,10 @@ public class TransportView extends VerticalLayout implements View {
     private Authentication auth;
 
     @Autowired
-    public TransportView(TransportService transportService, UserService userService) {
+    public TransportView(TransportService transportService, UserService userService, AuctionService auctionService) {
         this.transportService = transportService;
         this.userService = userService;
+        this.auctionService = auctionService;
     }
 
     @Override
@@ -115,7 +118,7 @@ public class TransportView extends VerticalLayout implements View {
                 TransportListViewDTO selected = itemClick.getItem();
                 Optional<TransportDetailsDTO> detailsDTO = transportService.findAndMapTransport(selected.getId(), TransportDetailsDTO.class);
                 if (detailsDTO.isPresent()) {
-                    TransportDetailsWindow detailsWindow = new TransportDetailsWindow(detailsDTO.get());
+                    TransportDetailsWindow detailsWindow = new TransportDetailsWindow(detailsDTO.get(),auctionService);
                     UI.getCurrent().addWindow(detailsWindow);
                 } else {
                     Notification.show("Cannot find selected transport job.");
